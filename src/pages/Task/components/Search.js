@@ -1,6 +1,35 @@
-const Search = () => {
+import { useState, useEffect, useRef } from "react"
+
+const Search = ({
+  setSearchedIssue,
+  getSearchIssue,
+  setKeyword,
+  keyword,
+  searchIssuePage,
+}) => {
+  const getSearchIssueRef = useRef(false)
+  function keywordChange(e) {
+    setKeyword(e.target.value)
+  }
+  // const searchStatus = useRef(false)
+  function keywordSearch(event) {
+    const keyword = document.getElementById("search_task").value
+    event.preventDefault()
+    setKeyword(keyword)
+    setSearchedIssue([])
+    searchIssuePage.current = 1
+    getSearchIssueRef.current = true
+    // getSearchIssue()
+  }
+  useEffect(() => {
+    if (!getSearchIssueRef.current) {
+      return
+    }
+    getSearchIssue()
+  }, [keyword])
   return (
     <form className="w-1/2 mx-auto mt-10">
+      {/* {keyword} */}
       <label
         htmlFor="default-search"
         className="mb-2 text-sm font-medium text-gray-900 sr-only "
@@ -33,7 +62,8 @@ const Search = () => {
           required
         />
         <button
-          type="submit"
+          onClick={keywordSearch}
+          type="button"
           className="text-white absolute right-2.5 bottom-2.5 bg-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary-light font-medium rounded-lg text-sm px-4 py-2 "
         >
           Search

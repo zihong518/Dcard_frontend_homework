@@ -35,11 +35,6 @@ async function postData() {
     // headers: headers,
   })
   const token = await res.data.token
-  const octokit = new Octokit({
-    auth: token,
-    accept: "application/vnd.github+json",
-  })
-
   if (token) {
     sessionStorage.setItem("token", token)
   }
