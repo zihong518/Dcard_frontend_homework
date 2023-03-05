@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from "react"
 import { Octokit } from "@octokit/core"
 // let assignedIssuePage = 1
 // let searchIssuePage = 1
-
+// const statusType = ["Open", "In Progress", "Done"]
 const Task = () => {
   const [issues, setIssues] = useState([])
   const [assignedIssue, setAssignedIssue] = useState([])
@@ -15,6 +15,20 @@ const Task = () => {
   const searchIssuePage = useRef(1)
   // const [showType, setShowType] = useState("")
   const [keyword, setKeyword] = useState("")
+  const [statusCheck, setStatusCheck] = useState([
+    {
+      name: "Open",
+      checked: true,
+    },
+    {
+      name: "In Progress",
+      checked: true,
+    },
+    {
+      name: "Done",
+      checked: true,
+    },
+  ])
 
   useEffect(() => {
     getAssignedIssue()
@@ -124,8 +138,44 @@ const Task = () => {
   function clearSearch() {
     setKeyword("")
     setSearchedIssue([])
+    document.getElementById("search_task").value = ""
     searchIssuePage.current = 1
     showType.current = "assigned"
+  }
+  function handleStatusChange(index) {
+    setStatusCheck(
+      statusCheck.map((status, currentIndex) => {
+        if (currentIndex === index) {
+          return { ...status, checked: !status.checked }
+        } else {
+          return status
+        }
+      })
+    )
+  }
+  useEffect(() => {
+    const statusChecked = statusCheck
+      .filter((status) => status.checked)
+      .map((status) => status.name)
+    console.log(statusChecked)
+    setIssues(
+      assignedIssue.filter((issue) => {
+        return statusChecked.includes(issue.labels[0].name)
+      })
+    )
+  }, statusCheck)
+  function getStatusCheckbox(status) {
+    let color = "blue"
+    if (status === "Open") {
+      color = "green"
+    } else if (status === "In Progress") {
+      color = "yellow"
+    } else if (status === "Done") {
+      color = "red"
+    } else {
+      return
+    }
+    return `accent-${color}-100 focus:ring-${color}-300 hover:accent-${color}-400 `
   }
   return (
     <div className="app">
@@ -136,6 +186,7 @@ const Task = () => {
         keyword={keyword}
         searchIssuePage={searchIssuePage}
       ></Search>
+
       <div className="mt-10 mx-20">
         {keyword && (
           <div className="text-2xl font-bold flex justify-between">
@@ -148,6 +199,23 @@ const Task = () => {
             </button>
           </div>
         )}
+        <div className="flex justify-end">
+          {statusCheck.map((status, index) => (
+            <label className="mx-2 flex items-center " key={status.name}>
+              <input
+                type="checkbox"
+                className={`${getStatusCheckbox(
+                  status.name
+                )} w-4 h-4 mx-2 py-1  ring-inset bg-gray-300 border-gray-300  rounded   focus:ring-2 `}
+                onChange={() => handleStatusChange(index)}
+                name="status"
+                id=""
+                checked={status.checked}
+              />
+              {status.name}
+            </label>
+          ))}
+        </div>
         {issues.map((item) => {
           return <Item key={item.node_id} item={item}></Item>
         })}
