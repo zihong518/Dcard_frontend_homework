@@ -1,4 +1,7 @@
-const Item = ({ item }) => {
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
+
+const Item = ({ item, setModalItem, changeModelItemRef }) => {
   //   console.log(fetchData)
   const multilineEllipsis = {
     display: "-webkit-box",
@@ -17,8 +20,16 @@ const Item = ({ item }) => {
       return "bg-blue-100"
     }
   }
+  function setModal() {
+    console.log(123)
+    changeModelItemRef.current = true
+    setModalItem(item)
+  }
   return (
-    <div className="py-5 px-10 bg-white shadow-gray-300 shadow rounded my-3">
+    <div
+      className="py-5 px-10 bg-white shadow-gray-300 shadow rounded my-3"
+      onClick={() => setModal()}
+    >
       <div className=" border-b-2 pb-3 ">
         {item.labels.map((label) => (
           <span
@@ -32,9 +43,15 @@ const Item = ({ item }) => {
         ))}
         <h2 className="text-3xl mt-2 font-bold">{item.title}</h2>
       </div>
-      <div className="mt-5 " style={multilineEllipsis}>
+      <ReactMarkdown
+        children={item.body}
+        className="mt-5 max-h-40 overflow-y-hidden"
+        remarkPlugins={[remarkGfm]}
+        style={multilineEllipsis}
+      ></ReactMarkdown>
+      {/* <div className="mt-5 " style={multilineEllipsis}>
         {item.body}
-      </div>
+      </div> */}
     </div>
   )
 }

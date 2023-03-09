@@ -1,8 +1,10 @@
 import Search from "./components/Search"
 import Item from "./components/Item"
+import Modal from "./components/Modal"
 import { useLocation } from "react-router-dom"
 import { useEffect, useState, useRef } from "react"
 import { Octokit } from "@octokit/core"
+import { click } from "@testing-library/user-event/dist/click"
 // let assignedIssuePage = 1
 // let searchIssuePage = 1
 // const statusType = ["Open", "In Progress", "Done"]
@@ -13,7 +15,9 @@ const Task = () => {
   const showType = useRef("assigned")
   const assignedIssuePage = useRef(1)
   const searchIssuePage = useRef(1)
-  // const [showType, setShowType] = useState("")
+  const [modalItem, setModalItem] = useState({})
+  const changeModelItemRef = useRef(false)
+  // const [modalBody, setModalBody] = useState("")
   const [keyword, setKeyword] = useState("")
   const [statusCheck, setStatusCheck] = useState([
     {
@@ -71,11 +75,23 @@ const Task = () => {
     // }
     console.log(showType.current)
     if (showType.current == "assigned") {
-      setIssues(assignedIssue)
+      const statusChecked = statusCheck
+        .filter((status) => status.checked)
+        .map((status) => status.name)
+
+      assignedIssue.sort((a, b) => {
+        return new Date(b.created_at) - new Date(a.created_at)
+      })
+
+      setIssues(
+        assignedIssue.filter((issue) => {
+          return statusChecked.includes(issue.labels[0].name)
+        })
+      )
     } else if (showType.current == "search") {
       setIssues(searchedIssue)
     }
-  }, [showType.current, assignedIssue, searchedIssue])
+  }, [showType.current, assignedIssue, searchedIssue, statusCheck])
 
   useEffect(() => {
     if (!loadMoreIssueRef.current) {
@@ -110,9 +126,19 @@ const Task = () => {
     const fetchedAssignedIssue = await octokit
       .request("GET /issues", {
         per_page: "10",
+        // filter: "all",
+        state: "all",
+        sort: "created",
+        direction: "desc",
         page: assignedIssuePage.current,
       })
       .then(assignedIssuePage.current++)
+    // .then(
+    //   window.scrollTo({
+    //     top: height,
+    //     behavior: "smooth",
+    //   })
+    // )
     console.log(fetchedAssignedIssue)
     loadMore(fetchedAssignedIssue.data)
   }
@@ -153,17 +179,17 @@ const Task = () => {
       })
     )
   }
-  useEffect(() => {
-    const statusChecked = statusCheck
-      .filter((status) => status.checked)
-      .map((status) => status.name)
-    console.log(statusChecked)
-    setIssues(
-      assignedIssue.filter((issue) => {
-        return statusChecked.includes(issue.labels[0].name)
-      })
-    )
-  }, statusCheck)
+  // useEffect(() => {
+  //   const statusChecked = statusCheck
+  //     .filter((status) => status.checked)
+  //     .map((status) => status.name)
+  //   setIssues(
+  //     assignedIssue.filter((issue) => {
+  //       return statusChecked.includes(issue.labels[0].name)
+  //     })
+  //   )
+  // }, statusCheck)
+
   function getStatusCheckbox(status) {
     let color = "blue"
     if (status === "Open") {
@@ -177,8 +203,26 @@ const Task = () => {
     }
     return `accent-${color}-100 focus:ring-${color}-300 hover:accent-${color}-400 `
   }
+  useEffect(() => {
+    if (!changeModelItemRef.current) {
+      return
+    }
+    document.getElementById("itemModel").classList.remove("hidden")
+    document.getElementById("itemModel").classList.add("flex")
+    changeModelItemRef.current = false
+  }, [modalItem])
+  // function handleModal(item) {
+  //   // console.log(item)
+  //   setModalItem(item)
+  // }
   return (
     <div className="app">
+      <Modal
+        item={modalItem}
+        setModalItem={setModalItem}
+        changeModelItemRef={changeModelItemRef}
+      ></Modal>
+      {/* </div> */}
       <Search
         setSearchedIssue={setSearchedIssue}
         getSearchIssue={getSearchIssue}
@@ -217,7 +261,14 @@ const Task = () => {
           ))}
         </div>
         {issues.map((item) => {
-          return <Item key={item.node_id} item={item}></Item>
+          return (
+            <Item
+              key={item.node_id}
+              item={item}
+              setModalItem={setModalItem}
+              changeModelItemRef={changeModelItemRef}
+            ></Item>
+          )
         })}
       </div>
     </div>
