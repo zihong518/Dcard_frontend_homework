@@ -13,12 +13,15 @@ const Search = ({
   }
   // const searchStatus = useRef(false)
   function keywordSearch(event) {
-    const keyword = document.getElementById("search_task").value
+    const keywordInput = document.getElementById("search_task").value
     event.preventDefault()
-    setKeyword(keyword)
-    setSearchedIssue([])
-    searchIssuePage.current = 1
-    getSearchIssueRef.current = true
+    if (keyword !== keywordInput) {
+      setKeyword(keywordInput)
+      setSearchedIssue([])
+      searchIssuePage.current = 1
+      getSearchIssueRef.current = true
+    }
+
     // getSearchIssue()
   }
   useEffect(() => {

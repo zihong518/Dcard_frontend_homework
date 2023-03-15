@@ -1,6 +1,8 @@
+import { ReactComponent as Logo } from "../../src/components/image/trash.svg"
+
 const Item = ({ id, note, date, time, deleteData, submittingStatus }) => {
   function deleteItem() {
-	submittingStatus.current = true
+    submittingStatus.current = true
     deleteData(function (prev) {
       return prev.filter((item) => item.id !== id)
     })
@@ -11,7 +13,7 @@ const Item = ({ id, note, date, time, deleteData, submittingStatus }) => {
         <p>{note}</p>
         <p>{`${date} ${time}`}</p>
       </div>
-      <button onClick={deleteItem} className="remove" >
+      <button onClick={deleteItem} className="remove">
         刪除
       </button>
     </div>

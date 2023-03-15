@@ -1,6 +1,8 @@
 import Search from "./components/Search"
 import Item from "./components/Item"
-import Modal from "./components/Modal"
+import ItemModal from "./components/ItemModal"
+import AlertModal from "./components/AlertModal"
+import Loading from "./components/Loading"
 import { useLocation } from "react-router-dom"
 import { useEffect, useState, useRef } from "react"
 import { Octokit } from "@octokit/core"
@@ -16,9 +18,13 @@ const Task = () => {
   const assignedIssuePage = useRef(1)
   const searchIssuePage = useRef(1)
   const [modalItem, setModalItem] = useState({})
-  const changeModelItemRef = useRef(false)
+  const changeModalItemRef = useRef(false)
+  // const sortRef = useRef("")
+  const [sort, setSort] = useState("desc")
+  const deleteItemRef = useRef({})
   // const [modalBody, setModalBody] = useState("")
   const [keyword, setKeyword] = useState("")
+  const loadMoreIssueRef = useRef(true)
   const [statusCheck, setStatusCheck] = useState([
     {
       name: "Open",
@@ -30,6 +36,10 @@ const Task = () => {
     },
     {
       name: "Done",
+      checked: true,
+    },
+    {
+      name: "Else",
       checked: true,
     },
   ])
@@ -54,7 +64,6 @@ const Task = () => {
       nowIssue = searchedIssue
     }
     // console.log(nowIssue)
-    console.log(nowIssue)
     if (nowIssue.length === 0) {
       setIssueFunction(fetchData)
     } else {
@@ -67,27 +76,39 @@ const Task = () => {
     }
   }
 
-  const loadMoreIssueRef = useRef(true)
   // const changeShowTypeRef = useRef(true)
   useEffect(() => {
     // if (!changeShowTypeRef.current) {
     //   return
     // }
-    console.log(showType.current)
     if (showType.current == "assigned") {
       const statusChecked = statusCheck
         .filter((status) => status.checked)
         .map((status) => status.name)
-
-      assignedIssue.sort((a, b) => {
-        return new Date(b.created_at) - new Date(a.created_at)
+      const statusAll = statusCheck.map((status) => status.name)
+      function classifyStatus(label) {
+        if (statusAll.includes(label)) {
+          return label
+        } else {
+          return "Else"
+        }
+      }
+      const filterIssue = assignedIssue.filter((issue) => {
+        if (!issue.labels.length) {
+          if (statusChecked.includes("Else")) {
+            return issue
+          }
+        }
+        for (let i = 0; i < issue.labels.length; i++) {
+          let label = issue.labels[i].name
+          if (statusChecked.includes(classifyStatus(label))) {
+            console.log(classifyStatus(label))
+            return issue
+          }
+        }
       })
 
-      setIssues(
-        assignedIssue.filter((issue) => {
-          return statusChecked.includes(issue.labels[0].name)
-        })
-      )
+      setIssues(filterIssue)
     } else if (showType.current == "search") {
       setIssues(searchedIssue)
     }
@@ -123,24 +144,20 @@ const Task = () => {
   }, [issues])
 
   async function getAssignedIssue() {
+    // if( ="desc"){}
     const fetchedAssignedIssue = await octokit
       .request("GET /issues", {
         per_page: "10",
         // filter: "all",
         state: "all",
         sort: "created",
-        direction: "desc",
+        direction: sort,
         page: assignedIssuePage.current,
       })
       .then(assignedIssuePage.current++)
-    // .then(
-    //   window.scrollTo({
-    //     top: height,
-    //     behavior: "smooth",
-    //   })
-    // )
-    console.log(fetchedAssignedIssue)
-    loadMore(fetchedAssignedIssue.data)
+    console.log(fetchedAssignedIssue.data)
+    // loadMore(fetchedAssignedIssue.data)
+    loadMore(fetchedAssignedIssue.data.filter((x) => x.state == "open"))
   }
   async function getSearchIssue() {
     if (!loadMoreIssueRef.current) {
@@ -151,6 +168,8 @@ const Task = () => {
       .request("GET /search/issues", {
         q: keyword,
         sort: "created",
+        // state: "all",
+        order: sort,
         per_page: 10,
         page: searchIssuePage.current,
       })
@@ -161,13 +180,17 @@ const Task = () => {
     // console.log(showType)
     loadMore(searchedIssue.data.items)
   }
+
   function clearSearch() {
     setKeyword("")
     setSearchedIssue([])
     document.getElementById("search_task").value = ""
     searchIssuePage.current = 1
+    getAssignedIssue()
+
     showType.current = "assigned"
   }
+
   function handleStatusChange(index) {
     setStatusCheck(
       statusCheck.map((status, currentIndex) => {
@@ -179,16 +202,28 @@ const Task = () => {
       })
     )
   }
-  // useEffect(() => {
-  //   const statusChecked = statusCheck
-  //     .filter((status) => status.checked)
-  //     .map((status) => status.name)
-  //   setIssues(
-  //     assignedIssue.filter((issue) => {
-  //       return statusChecked.includes(issue.labels[0].name)
-  //     })
-  //   )
-  // }, statusCheck)
+
+  function handleTimeSort(event) {
+    setSort(event.target.value)
+  }
+
+  useEffect(() => {
+    console.log(123)
+    if (showType.current === "assigned") {
+      setAssignedIssue([])
+      assignedIssuePage.current = 1
+      loadMoreIssueRef.current = true
+      getAssignedIssue()
+    } else {
+      setSearchedIssue([])
+      searchIssuePage.current = 1
+      loadMoreIssueRef.current = true
+      getSearchIssue()
+      setAssignedIssue([])
+      assignedIssuePage.current = 1
+      // getAssignedIssue()
+    }
+  }, [sort])
 
   function getStatusCheckbox(status) {
     let color = "blue"
@@ -203,13 +238,16 @@ const Task = () => {
     }
     return `accent-${color}-100 focus:ring-${color}-300 hover:accent-${color}-400 `
   }
+
+  // Modal effect
   useEffect(() => {
-    if (!changeModelItemRef.current) {
+    if (!changeModalItemRef.current) {
       return
     }
+    document.getElementsByTagName("body")[0].classList.add("overflow-y-hidden")
     document.getElementById("itemModel").classList.remove("hidden")
     document.getElementById("itemModel").classList.add("flex")
-    changeModelItemRef.current = false
+    changeModalItemRef.current = false
   }, [modalItem])
   // function handleModal(item) {
   //   // console.log(item)
@@ -217,11 +255,17 @@ const Task = () => {
   // }
   return (
     <div className="app">
-      <Modal
+      <ItemModal
         item={modalItem}
         setModalItem={setModalItem}
-        changeModelItemRef={changeModelItemRef}
-      ></Modal>
+        changeModalItemRef={changeModalItemRef}
+      ></ItemModal>
+      <AlertModal
+        deleteItemRef={deleteItemRef}
+        octokit={octokit}
+        setAssignedIssue={setAssignedIssue}
+      ></AlertModal>
+      <Loading></Loading>
       {/* </div> */}
       <Search
         setSearchedIssue={setSearchedIssue}
@@ -243,7 +287,20 @@ const Task = () => {
             </button>
           </div>
         )}
+
         <div className="flex justify-end">
+          <select
+            name="timeSort"
+            id=""
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 p-1"
+            onChange={handleTimeSort}
+            defaultValue={sort}
+          >
+            <option value="desc">sort from newest</option>
+            <option value="asc">sort from oldest</option>
+          </select>
+
+          {/* FIXME: fix the color of checkbox */}
           {statusCheck.map((status, index) => (
             <label className="mx-2 flex items-center " key={status.name}>
               <input
@@ -266,7 +323,8 @@ const Task = () => {
               key={item.node_id}
               item={item}
               setModalItem={setModalItem}
-              changeModelItemRef={changeModelItemRef}
+              changeModalItemRef={changeModalItemRef}
+              deleteItemRef={deleteItemRef}
             ></Item>
           )
         })}
