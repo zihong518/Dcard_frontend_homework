@@ -8,8 +8,8 @@ const Item = ({
   item,
   setModalItem,
   changeModalItemRef,
-
   deleteItemRef,
+  editItemRef,
 }) => {
   //   console.log(fetchData)
   const multilineEllipsis = {
@@ -30,11 +30,17 @@ const Item = ({
     }
   }
   function setModal() {
-    console.log(123)
+    // console.log(123)
     changeModalItemRef.current = true
     setModalItem(item)
   }
-
+  function editModal() {
+    document.getElementsByTagName("body")[0].classList.add("overflow-y-hidden")
+    document.getElementById("editModal").classList.remove("hidden")
+    document.getElementById("editModal").classList.add("flex")
+    setModalItem(item)
+    editItemRef.current = item
+  }
   async function deleteModal() {
     document.getElementsByTagName("body")[0].classList.add("overflow-y-hidden")
     document.getElementById("alertModal").classList.remove("hidden")
@@ -63,7 +69,12 @@ const Item = ({
           </div>
           <div className="flex">
             <div className="hover:bg-gray-100 cursor-pointer duration-200 p-1 rounded-md">
-              <EditIcon />
+              <EditIcon
+                onClick={(e) => {
+                  e.stopPropagation()
+                  editModal()
+                }}
+              />
             </div>
             <div className="hover:bg-gray-100 cursor-pointer duration-200 p-1 rounded-md">
               <TrashIcon

@@ -3,6 +3,7 @@ import Item from "./components/Item"
 import ItemModal from "./components/ItemModal"
 import AlertModal from "./components/AlertModal"
 import Loading from "./components/Loading"
+import EditModal from "./components/EditModal"
 import { useLocation } from "react-router-dom"
 import { useEffect, useState, useRef } from "react"
 import { Octokit } from "@octokit/core"
@@ -22,6 +23,8 @@ const Task = () => {
   // const sortRef = useRef("")
   const [sort, setSort] = useState("desc")
   const deleteItemRef = useRef({})
+  const editItemRef = useRef({})
+
   // const [modalBody, setModalBody] = useState("")
   const [keyword, setKeyword] = useState("")
   const loadMoreIssueRef = useRef(true)
@@ -102,7 +105,6 @@ const Task = () => {
         for (let i = 0; i < issue.labels.length; i++) {
           let label = issue.labels[i].name
           if (statusChecked.includes(classifyStatus(label))) {
-            console.log(classifyStatus(label))
             return issue
           }
         }
@@ -245,8 +247,8 @@ const Task = () => {
       return
     }
     document.getElementsByTagName("body")[0].classList.add("overflow-y-hidden")
-    document.getElementById("itemModel").classList.remove("hidden")
-    document.getElementById("itemModel").classList.add("flex")
+    document.getElementById("itemModal").classList.remove("hidden")
+    document.getElementById("itemModal").classList.add("flex")
     changeModalItemRef.current = false
   }, [modalItem])
   // function handleModal(item) {
@@ -265,6 +267,14 @@ const Task = () => {
         octokit={octokit}
         setAssignedIssue={setAssignedIssue}
       ></AlertModal>
+      <EditModal
+        item={modalItem}
+        setModalItem={setModalItem}
+        octokit={octokit}
+        editItemRef={editItemRef}
+        changeModalItemRef={changeModalItemRef}
+      ></EditModal>
+
       <Loading></Loading>
       {/* </div> */}
       <Search
@@ -325,6 +335,7 @@ const Task = () => {
               setModalItem={setModalItem}
               changeModalItemRef={changeModalItemRef}
               deleteItemRef={deleteItemRef}
+              editItemRef={editItemRef}
             ></Item>
           )
         })}

@@ -1,7 +1,7 @@
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { dateStringToDate } from "../../../global/function"
-const Modal = ({ item, setModalItem, changeModelItemRef }) => {
+const Modal = ({ item, setModalItem }) => {
   const closeModal = () => {
     document
       .getElementsByTagName("body")[0]
@@ -9,14 +9,14 @@ const Modal = ({ item, setModalItem, changeModelItemRef }) => {
 
     document.getElementsByTagName("body")[0].classList.add("overflow-y-auto")
 
-    document.getElementById("itemModel").classList.remove("flex")
-    document.getElementById("itemModel").classList.add("hidden")
+    document.getElementById("itemModal").classList.remove("flex")
+    document.getElementById("itemModal").classList.add("hidden")
     // changeModelItemRef.current = true
     setModalItem("")
   }
   return (
     <div
-      id="itemModel"
+      id="itemModal"
       tabIndex="-1"
       aria-hidden="true"
       style={{ backgroundColor: "rgba(0,0,0,0.4)" }}
