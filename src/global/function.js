@@ -23,11 +23,17 @@ export const dateStringToDate = (dateString) => {
 
 export const showLoading = () => {
   document.getElementsByTagName("body")[0].classList.add("overflow-y-hidden")
-  document.getElementById("loading").classList.add("flex")
-  document.getElementById("loading").classList.remove("hidden")
+  document.getElementById("loading").classList.replace("hidden", "flex")
 }
 export const hiddenLoading = () => {
   document.getElementsByTagName("body")[0].classList.remove("overflow-y-hidden")
-  document.getElementById("loading").classList.add("hidden")
-  document.getElementById("loading").classList.remove("flex")
+  document.getElementById("loading").classList.replace("flex", "hidden")
+}
+
+export const showContentLoading = () => {
+  document.getElementById("contentLoading").classList.replace("hidden", "flex")
+}
+
+export const hiddenContentLoading = () => {
+  document.getElementById("contentLoading").classList.replace("flex", "hidden")
 }

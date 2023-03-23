@@ -10,6 +10,7 @@ const Item = ({
   changeModalItemRef,
   deleteItemRef,
   editItemRef,
+  showType,
 }) => {
   //   console.log(fetchData)
   const multilineEllipsis = {
@@ -50,7 +51,7 @@ const Item = ({
 
   return (
     <div
-      className="py-5 px-10 bg-white shadow-gray-300 shadow rounded my-3"
+      className="py-5 px-10 bg-white shadow-gray-300 shadow rounded my-3 hover:shadow-xl duration-100 cursor-pointer"
       onClick={() => setModal()}
     >
       <div className=" border-b-2 pb-3 ">
@@ -67,24 +68,26 @@ const Item = ({
               </span>
             ))}
           </div>
-          <div className="flex">
-            <div className="hover:bg-gray-100 cursor-pointer duration-200 p-1 rounded-md">
-              <EditIcon
-                onClick={(e) => {
-                  e.stopPropagation()
-                  editModal()
-                }}
-              />
+          {showType.current === "assigned" && (
+            <div className="flex">
+              <div className="hover:bg-gray-100 cursor-pointer duration-200 p-1 rounded-md">
+                <EditIcon
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    editModal()
+                  }}
+                />
+              </div>
+              <div className="hover:bg-gray-100 cursor-pointer duration-200 p-1 rounded-md">
+                <TrashIcon
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    deleteModal()
+                  }}
+                />
+              </div>
             </div>
-            <div className="hover:bg-gray-100 cursor-pointer duration-200 p-1 rounded-md">
-              <TrashIcon
-                onClick={(e) => {
-                  e.stopPropagation()
-                  deleteModal()
-                }}
-              />
-            </div>
-          </div>
+          )}
         </div>
 
         <p className="text-3xl mt-2 font-bold">{item.title}</p>

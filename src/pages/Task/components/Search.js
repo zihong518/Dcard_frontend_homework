@@ -28,6 +28,7 @@ const Search = ({
     if (!getSearchIssueRef.current) {
       return
     }
+    getSearchIssueRef.current = false
     getSearchIssue()
   }, [keyword])
   return (

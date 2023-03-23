@@ -4,6 +4,12 @@ import ItemModal from "./components/ItemModal"
 import AlertModal from "./components/AlertModal"
 import Loading from "./components/Loading"
 import EditModal from "./components/EditModal"
+import {
+  showLoading,
+  hiddenLoading,
+  showContentLoading,
+  hiddenContentLoading,
+} from "../../global/function"
 import { useLocation } from "react-router-dom"
 import { useEffect, useState, useRef } from "react"
 import { Octokit } from "@octokit/core"
@@ -147,6 +153,11 @@ const Task = () => {
 
   async function getAssignedIssue() {
     // if( ="desc"){}
+    if (assignedIssuePage.current === 1) {
+      showLoading()
+    } else {
+      showContentLoading()
+    }
     const fetchedAssignedIssue = await octokit
       .request("GET /issues", {
         per_page: "10",
@@ -157,7 +168,11 @@ const Task = () => {
         page: assignedIssuePage.current,
       })
       .then(assignedIssuePage.current++)
-    console.log(fetchedAssignedIssue.data)
+    if (assignedIssuePage.current === 2) {
+      hiddenLoading()
+    } else {
+      hiddenContentLoading()
+    }
     // loadMore(fetchedAssignedIssue.data)
     loadMore(fetchedAssignedIssue.data.filter((x) => x.state == "open"))
   }
@@ -166,6 +181,11 @@ const Task = () => {
       loadMoreIssueRef.current = true
     }
     // console.log(keyword)
+    if (searchIssuePage.current === 1) {
+      showLoading()
+    } else {
+      showContentLoading()
+    }
     const searchedIssue = await octokit
       .request("GET /search/issues", {
         q: keyword,
@@ -176,6 +196,11 @@ const Task = () => {
         page: searchIssuePage.current,
       })
       .then((searchIssuePage.current += 1))
+    if (searchIssuePage.current === 2) {
+      hiddenLoading()
+    } else {
+      hiddenContentLoading()
+    }
     showType.current = "search"
     // setShowType("search")
     // setSearchedIssue(searchedIssue.data.items)
@@ -184,13 +209,12 @@ const Task = () => {
   }
 
   function clearSearch() {
+    showType.current = "assigned"
     setKeyword("")
     setSearchedIssue([])
     document.getElementById("search_task").value = ""
     searchIssuePage.current = 1
     getAssignedIssue()
-
-    showType.current = "assigned"
   }
 
   function handleStatusChange(index) {
@@ -298,7 +322,7 @@ const Task = () => {
           </div>
         )}
 
-        <div className="flex justify-end">
+        <div className="flex justify-end mt-2">
           <select
             name="timeSort"
             id=""
@@ -309,23 +333,26 @@ const Task = () => {
             <option value="desc">sort from newest</option>
             <option value="asc">sort from oldest</option>
           </select>
-
-          {/* FIXME: fix the color of checkbox */}
-          {statusCheck.map((status, index) => (
-            <label className="mx-2 flex items-center " key={status.name}>
-              <input
-                type="checkbox"
-                className={`${getStatusCheckbox(
-                  status.name
-                )} w-4 h-4 mx-2 py-1  ring-inset bg-gray-300 border-gray-300  rounded   focus:ring-2 `}
-                onChange={() => handleStatusChange(index)}
-                name="status"
-                id=""
-                checked={status.checked}
-              />
-              {status.name}
-            </label>
-          ))}
+          {showType.current === "assigned" && (
+            <div className="flex">
+              {/* FIXME: fix the color of checkbox */}
+              {statusCheck.map((status, index) => (
+                <label className="mx-2 flex items-center " key={status.name}>
+                  <input
+                    type="checkbox"
+                    className={`${getStatusCheckbox(
+                      status.name
+                    )} w-4 h-4 mx-2 py-1  ring-inset bg-gray-300 border-gray-300  rounded   focus:ring-2 `}
+                    onChange={() => handleStatusChange(index)}
+                    name="status"
+                    id=""
+                    checked={status.checked}
+                  />
+                  {status.name}
+                </label>
+              ))}
+            </div>
+          )}
         </div>
         {issues.map((item) => {
           return (
@@ -336,9 +363,20 @@ const Task = () => {
               changeModalItemRef={changeModalItemRef}
               deleteItemRef={deleteItemRef}
               editItemRef={editItemRef}
+              showType={showType}
             ></Item>
           )
         })}
+        <div id="contentLoading" className="mt-10 hidden justify-center">
+          <div className="animate-bounce flex justify-center flex-col self-center">
+            <img
+              className="w-10 mx-auto"
+              src="https://upload.wikimedia.org/wikipedia/commons/f/f8/Dcard_Favicon_x520.png"
+              alt=""
+            />
+            <p className="mt-1 font-mono text-center">Loading...</p>
+          </div>
+        </div>
       </div>
     </div>
   )
