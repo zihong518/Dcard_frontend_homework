@@ -2,17 +2,12 @@ import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { dateStringToDate } from "../../../global/function"
 const Modal = ({ item, setModalItem }) => {
-  console.log(item)
+  // cose the modal
   const closeModal = () => {
     document
       .getElementsByTagName("body")[0]
-      .classList.remove("overflow-y-hidden")
-
-    document.getElementsByTagName("body")[0].classList.add("overflow-y-auto")
-
-    document.getElementById("itemModal").classList.remove("flex")
-    document.getElementById("itemModal").classList.add("hidden")
-    // changeModelItemRef.current = true
+      .classList.replace("overflow-y-hidden", "overflow-y-auto")
+    document.getElementById("itemModal").classList.replace("flex", "hidden")
     setModalItem("")
   }
   return (
@@ -32,9 +27,7 @@ const Modal = ({ item, setModalItem }) => {
           >
             {item.title}
           </a>
-          {/* <p className="text-sm text-gray-500 font-mono text-right">
-            {dateStringToDate(item.created_at)}
-          </p> */}
+
           <div className="flex items-right flex-col">
             <button
               type="button"
@@ -64,10 +57,9 @@ const Modal = ({ item, setModalItem }) => {
         </div>
         <ReactMarkdown
           children={item.body}
-          className="m-5 overflow-hidden"
+          className="m-5 overflow-hidden prose"
           remarkPlugins={[remarkGfm]}
         ></ReactMarkdown>
-        {/* <div className="p-6 space-y-6">{item.body}</div> */}
       </div>
     </div>
   )

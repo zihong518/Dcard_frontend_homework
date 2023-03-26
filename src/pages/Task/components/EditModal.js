@@ -4,16 +4,19 @@ import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { dateStringToDate } from "../../../global/function"
 const EditModal = ({ editItemRef, setModalItem, octokit }) => {
-  const [itemTitle, setItemTitle] = useState(" ")
-  const [itemBody, setItemBody] = useState(" ")
-  const disabledDetectRef = useRef(true)
+  const [itemTitle, setItemTitle] = useState(" ") // title
+  const [itemBody, setItemBody] = useState(" ") // body
+  const disabledDetectRef = useRef(true) //detect submit button disabled or not
+  // detect the editItem change
   useEffect(() => {
-    console.log(editItemRef.current)
+    // if editItem is null , return
     if (!Object.keys(editItemRef.current).length) {
       return
     } else {
+      // set relatively title and body
       setItemTitle(editItemRef.current.title)
       setItemBody(editItemRef.current.body)
+      // detect title is null or not and show the alert text
       if (!editItemRef.current.title) {
         document
           .getElementById("titleCheckAlert")
@@ -23,6 +26,8 @@ const EditModal = ({ editItemRef, setModalItem, octokit }) => {
           .getElementById("titleCheckAlert")
           .classList.replace("inline", "hidden")
       }
+      // detect body is null or not and show the alert text
+
       if (editItemRef.current.body.length < 30) {
         document
           .getElementById("bodyCheckAlert")
@@ -34,19 +39,20 @@ const EditModal = ({ editItemRef, setModalItem, octokit }) => {
       }
     }
   }, [editItemRef.current])
+
+  // close the edit modal
   const closeModal = () => {
     editItemRef.current = {}
     document
       .getElementsByTagName("body")[0]
-      .classList.remove("overflow-y-hidden")
-    document.getElementsByTagName("body")[0].classList.add("overflow-y-auto")
+      .classList.replace("overflow-y-hidden", "overflow-y-auto")
     document.getElementById("editModal").classList.replace("flex", "hidden")
     setModalItem("")
   }
+  // check title is null or not
   function checkTitle(value) {
     setItemTitle(value)
     detectDisabled()
-
     if (!value) {
       document
         .getElementById("titleCheckAlert")
@@ -57,6 +63,7 @@ const EditModal = ({ editItemRef, setModalItem, octokit }) => {
         .classList.replace("inline", "hidden")
     }
   }
+  // check the length of body
   function checkBody(value) {
     setItemBody(value)
     detectDisabled()
@@ -71,6 +78,7 @@ const EditModal = ({ editItemRef, setModalItem, octokit }) => {
         .classList.replace("inline", "hidden")
     }
   }
+  // check the title and body and give the submit button disabled or not
   function detectDisabled() {
     const titleValue = document.getElementById("itemTitleInput").value
     const bodyValue = document.getElementById("itemBodyInput").value
@@ -82,10 +90,11 @@ const EditModal = ({ editItemRef, setModalItem, octokit }) => {
       return true
     }
   }
-  async function sentEditIssue() {
+
+  // send edit issue
+  async function sendEditIssue() {
     if (!detectDisabled()) {
       showLoading()
-
       const editItem = editItemRef.current
       await octokit
         .request("PATCH /repos/{owner}/{repo}/issues/{issue_number}", {
@@ -96,6 +105,7 @@ const EditModal = ({ editItemRef, setModalItem, octokit }) => {
           body: itemBody,
         })
         .then(() => {
+          // after change, reload the page to get the new data
           closeModal()
           window.location.reload()
         })
@@ -188,7 +198,7 @@ const EditModal = ({ editItemRef, setModalItem, octokit }) => {
         <div className="flex justify-center">
           <button
             className="my-4 p-2 bg-primary hover:bg-primary-light duration-150 text-white rounded-md disabled:bg-gray-200 disabled:text-gray-400"
-            onClick={sentEditIssue}
+            onClick={sendEditIssue}
             disabled={disabledDetectRef.current}
           >
             確認修改

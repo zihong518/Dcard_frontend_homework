@@ -1,3 +1,4 @@
+// transfer data string to date
 export const dateStringToDate = (dateString) => {
   const timestamp = Date.parse(dateString)
   const dateFormat = new Date(timestamp)
@@ -21,6 +22,7 @@ export const dateStringToDate = (dateString) => {
   return date
 }
 
+// show and hide the all page loading
 export const showLoading = () => {
   document.getElementsByTagName("body")[0].classList.add("overflow-y-hidden")
   document.getElementById("loading").classList.replace("hidden", "flex")
@@ -30,6 +32,7 @@ export const hiddenLoading = () => {
   document.getElementById("loading").classList.replace("flex", "hidden")
 }
 
+// show and hide the block  loading
 export const showContentLoading = () => {
   document.getElementById("contentLoading").classList.replace("hidden", "flex")
 }

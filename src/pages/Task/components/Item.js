@@ -12,13 +12,7 @@ const Item = ({
   editItemRef,
   showType,
 }) => {
-  //   console.log(fetchData)
-  const multilineEllipsis = {
-    display: "-webkit-box",
-    WebkitBoxOrient: "vertical",
-    WebkitLineClamp: "5",
-    overflow: "hidden",
-  }
+  // according the status to return different bg color
   function getStatusBackground(status) {
     if (status === "Open") {
       return "bg-green-100"
@@ -31,21 +25,20 @@ const Item = ({
     }
   }
   function setModal() {
-    // console.log(123)
     changeModalItemRef.current = true
     setModalItem(item)
   }
+  // show the modal and give the ref data
   function editModal() {
     document.getElementsByTagName("body")[0].classList.add("overflow-y-hidden")
-    document.getElementById("editModal").classList.remove("hidden")
-    document.getElementById("editModal").classList.add("flex")
+    document.getElementById("editModal").classList.replace("hidden", "flex")
     setModalItem(item)
     editItemRef.current = item
   }
-  async function deleteModal() {
+  // show the modal and give the ref data
+  function deleteModal() {
     document.getElementsByTagName("body")[0].classList.add("overflow-y-hidden")
-    document.getElementById("alertModal").classList.remove("hidden")
-    document.getElementById("alertModal").classList.add("flex")
+    document.getElementById("alertModal").classList.replace("hidden", "flex")
     deleteItemRef.current = item
   }
 
@@ -89,21 +82,17 @@ const Item = ({
             </div>
           )}
         </div>
-
         <p className="text-3xl mt-2 font-bold">{item.title}</p>
         <p className="text-sm text-gray-500 font-mono text-right">
           {dateStringToDate(item.created_at)}
         </p>
       </div>
+      {/* issueBody transfer to markdown */}
       <ReactMarkdown
         children={item.body}
-        className="mt-5 max-h-40 overflow-y-hidden"
+        className="mt-5 max-h-40 overflow-y-hidden prose"
         remarkPlugins={[remarkGfm]}
-        style={multilineEllipsis}
       ></ReactMarkdown>
-      {/* <div className="mt-5 " style={multilineEllipsis}>
-        {item.body}
-      </div> */}
     </div>
   )
 }

@@ -4,6 +4,7 @@ const AlertModal = ({ deleteItemRef, octokit, setAssignedIssue }) => {
     const deleteItem = deleteItemRef.current
     showLoading()
     closeAlertModal()
+    // update the github
     await octokit
       .request("PATCH /repos/{owner}/{repo}/issues/{issue_number}", {
         owner: deleteItem.repository.owner.login,
@@ -15,6 +16,7 @@ const AlertModal = ({ deleteItemRef, octokit, setAssignedIssue }) => {
         alert("修改失敗，請再試一次")
         closeAlertModal()
       })
+    // update the issue on the page
     await setAssignedIssue((prev) => {
       return prev.filter((x) => x !== deleteItem)
     })
@@ -25,8 +27,7 @@ const AlertModal = ({ deleteItemRef, octokit, setAssignedIssue }) => {
     document
       .getElementsByTagName("body")[0]
       .classList.remove("overflow-y-hidden")
-    document.getElementById("alertModal").classList.remove("flex")
-    document.getElementById("alertModal").classList.add("hidden")
+    document.getElementById("alertModal").classList.replace("flex", "hidden")
   }
   return (
     <div

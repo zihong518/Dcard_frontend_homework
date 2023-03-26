@@ -3,7 +3,7 @@ import Redirect from "../pages/redirect"
 import Task from "../pages/Task"
 import { HashRouter, Route, Routes } from "react-router-dom"
 import React, { useState } from "react"
-
+// use router
 const App = () => {
   return (
     <HashRouter>

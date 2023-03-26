@@ -4,39 +4,20 @@ import Loading from "../global/Loading"
 import { showLoading } from "../global/function"
 import { useRef, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-
+// get the query code
 const queryString = window.location.search
 const urlParams = new URLSearchParams(queryString)
 const code = urlParams.get("code")
 
-// let headers = {
-//   "Content-Type": "application/json",
-//   // Accept: "application/json",
-//   // "Access-Control-Allow-Origin": "*",
-// }
-
-// let data = {
-//   client_id: client_id,
-//   client_secret: client_secret,
-//   code: code,
-// }
-
-// window.onload = function () {
-//   postData()
-// }
-// $.getJSON("http://localhost:9999/authenticate/" + code, function (data) {
-//   console.log(data.token)
-// })
-async function postData(navigate) {
-  // const res = await fetch(`http://localhost:9999/authenticate/${code}`)
+async function getToken(navigate) {
+  // use query code to get auth token
   const res = await axios({
     method: "get",
     url: `http://localhost:9999/authenticate/${code}`,
-    // data: data,
-    // headers: headers,
   }).then((e) => {
     const token = e.data.token
     if (token) {
+      // save token in the session and navigate to task page
       sessionStorage.setItem("token", token)
       navigate("/task")
     }
@@ -46,17 +27,14 @@ async function postData(navigate) {
 const Redirect = () => {
   const navigate = useNavigate()
   const fetchToken = useRef(false)
+
   useEffect(() => {
     if (!fetchToken) {
       return
     }
     fetchToken.current = true
-    postData(navigate)
-    // if (postData()) {
-    //   navigate("/task")
-    // }
-
-    // document.location.hash = "#/task"
+    // use query code to get auth token
+    getToken(navigate)
     showLoading()
   }, [])
 

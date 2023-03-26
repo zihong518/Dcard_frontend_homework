@@ -8,8 +8,7 @@ const Search = ({
   searchIssuePage,
 }) => {
   const getSearchIssueRef = useRef(false)
-
-  // const searchStatus = useRef(false)
+  //set the keyword
   function keywordSearch(event) {
     const keywordInput = document.getElementById("search_task").value
     event.preventDefault()
@@ -19,9 +18,13 @@ const Search = ({
       searchIssuePage.current = 1
       getSearchIssueRef.current = true
     }
-
-    // getSearchIssue()
   }
+  function handleEnterKeyDown(event) {
+    if (event.key === "Enter") {
+      keywordSearch(event)
+    }
+  }
+  // detect the keyword and get the search issue
   useEffect(() => {
     if (!getSearchIssueRef.current) {
       return
@@ -31,7 +34,6 @@ const Search = ({
   }, [keyword])
   return (
     <form className="w-1/2 mx-auto mt-10">
-      {/* {keyword} */}
       <label
         htmlFor="default-search"
         className="mb-2 text-sm font-medium text-gray-900 sr-only "
@@ -62,6 +64,7 @@ const Search = ({
           className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary focus:border-primary-dark "
           placeholder="keyword"
           required
+          onKeyDown={handleEnterKeyDown}
         />
         <button
           onClick={keywordSearch}
