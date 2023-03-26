@@ -16,16 +16,22 @@ const Task = () => {
   const [issues, setIssues] = useState([]) //The issues show on the page
   const [assignedIssue, setAssignedIssue] = useState([]) // assigned issue
   const [searchedIssue, setSearchedIssue] = useState([]) // searched issue
-  const showType = useRef("assigned") //assigned or searched issue show now
   const assignedIssuePage = useRef(1)
   const searchIssuePage = useRef(1)
+
+  const showType = useRef("assigned") //assigned or searched issue show now
+
   const [modalItem, setModalItem] = useState({}) // the issue showing on the modal
-  const changeModalItemRef = useRef(false) // if true, can change the data in  modalItem
+  const changeModalItemRef = useRef(false) // // use useRef() to record if change the item in modal or not
+
   const [sort, setSort] = useState("desc") // sorting method
-  const deleteItemRef = useRef({}) // the Delete Item showing on the modal
-  const editItemRef = useRef({}) // the Edit Item showing on the modal
+
+  const deleteItemRef = useRef({}) // use useRef() to keep the Delete Item showing on the modal
+  const editItemRef = useRef({}) // use useRef() to keep the Edit Item showing on the modal
+
   const [keyword, setKeyword] = useState("") // the keyword when searched
-  const loadMoreIssueRef = useRef(true) // if true, page can load more issue
+
+  const loadMoreIssueRef = useRef(true) // use useRef() to record if load more or not
   // the record of status check
   const [statusCheck, setStatusCheck] = useState([
     {

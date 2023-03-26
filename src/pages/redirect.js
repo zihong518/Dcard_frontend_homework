@@ -14,14 +14,19 @@ async function getToken(navigate) {
   const res = await axios({
     method: "get",
     url: `http://localhost:9999/authenticate/${code}`,
-  }).then((e) => {
-    const token = e.data.token
-    if (token) {
-      // save token in the session and navigate to task page
-      sessionStorage.setItem("token", token)
-      navigate("/task")
-    }
   })
+    .then((e) => {
+      const token = e.data.token
+      if (token) {
+        // save token in the session and navigate to task page
+        sessionStorage.setItem("token", token)
+        navigate("/task")
+      }
+    })
+    .catch(() => {
+      alert("取得token失敗，請重新驗證")
+      window.location.assign("/")
+    })
 }
 
 const Redirect = () => {
