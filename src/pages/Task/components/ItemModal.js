@@ -2,6 +2,7 @@ import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { dateStringToDate } from "../../../global/function"
 const Modal = ({ item, setModalItem }) => {
+  console.log(item)
   const closeModal = () => {
     document
       .getElementsByTagName("body")[0]
@@ -24,9 +25,13 @@ const Modal = ({ item, setModalItem }) => {
     >
       <div className="relative w-full h-max max-w-2xl bg-white rounded-lg shadow ">
         <div className="flex items-start justify-between p-4 border-b rounded-t ">
-          <h3 className="flex self-center text-xl font-semibold text-gray-900 ">
+          <a
+            href={item.html_url}
+            className="flex self-center text-xl font-semibold"
+            target={"_blank"}
+          >
             {item.title}
-          </h3>
+          </a>
           {/* <p className="text-sm text-gray-500 font-mono text-right">
             {dateStringToDate(item.created_at)}
           </p> */}

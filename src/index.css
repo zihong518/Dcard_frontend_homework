@@ -6,3 +6,18 @@
 a {
     @apply underline text-blue-600 hover:text-blue-800 visited:text-purple-600
  }
+ ul,ol {
+    padding: revert;
+ }
+ hr{
+    margin: 2px 0 ;
+ }
+ ul li{
+    list-style: disc;
+ }
+ ol li{
+    list-style: decimal;
+ }
+ .task-list-item{
+    list-style: none;
+ }

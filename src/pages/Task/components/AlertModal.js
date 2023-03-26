@@ -4,13 +4,17 @@ const AlertModal = ({ deleteItemRef, octokit, setAssignedIssue }) => {
     const deleteItem = deleteItemRef.current
     showLoading()
     closeAlertModal()
-    await octokit.request("PATCH /repos/{owner}/{repo}/issues/{issue_number}", {
-      owner: deleteItem.repository.owner.login,
-      repo: deleteItem.repository.name,
-      issue_number: deleteItem.number,
-      state: "closed",
-    })
-
+    await octokit
+      .request("PATCH /repos/{owner}/{repo}/issues/{issue_number}", {
+        owner: deleteItem.repository.owner.login,
+        repo: deleteItem.repository.name,
+        issue_number: deleteItem.number,
+        state: "closed",
+      })
+      .catch(() => {
+        alert("修改失敗，請再試一次")
+        closeAlertModal()
+      })
     await setAssignedIssue((prev) => {
       return prev.filter((x) => x !== deleteItem)
     })

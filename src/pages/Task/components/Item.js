@@ -60,7 +60,7 @@ const Item = ({
             {item.labels.map((label) => (
               <span
                 key={label.node_id}
-                className={`rounded-md px-2 py-1 text- ${getStatusBackground(
+                className={`rounded-md px-2 mx-1 py-1 text- ${getStatusBackground(
                   label.name
                 )}`}
               >

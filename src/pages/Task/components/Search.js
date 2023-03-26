@@ -8,9 +8,7 @@ const Search = ({
   searchIssuePage,
 }) => {
   const getSearchIssueRef = useRef(false)
-  function keywordChange(e) {
-    setKeyword(e.target.value)
-  }
+
   // const searchStatus = useRef(false)
   function keywordSearch(event) {
     const keywordInput = document.getElementById("search_task").value
@@ -62,7 +60,7 @@ const Search = ({
           type="search"
           id="search_task"
           className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary focus:border-primary-dark "
-          placeholder="Search Mockups, Logos..."
+          placeholder="keyword"
           required
         />
         <button

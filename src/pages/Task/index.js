@@ -2,7 +2,7 @@ import Search from "./components/Search"
 import Item from "./components/Item"
 import ItemModal from "./components/ItemModal"
 import AlertModal from "./components/AlertModal"
-import Loading from "./components/Loading"
+import Loading from "../../global/Loading"
 import EditModal from "./components/EditModal"
 import {
   showLoading,
@@ -168,6 +168,11 @@ const Task = () => {
         page: assignedIssuePage.current,
       })
       .then(assignedIssuePage.current++)
+      .catch(() => {
+        alert("token過期，請重新認證")
+        window.location.assign("/")
+      })
+
     if (assignedIssuePage.current === 2) {
       hiddenLoading()
     } else {
@@ -196,6 +201,10 @@ const Task = () => {
         page: searchIssuePage.current,
       })
       .then((searchIssuePage.current += 1))
+      .catch(() => {
+        alert("token過期，請重新認證")
+        window.location.assign("/")
+      })
     if (searchIssuePage.current === 2) {
       hiddenLoading()
     } else {
@@ -234,7 +243,6 @@ const Task = () => {
   }
 
   useEffect(() => {
-    console.log(123)
     if (showType.current === "assigned") {
       setAssignedIssue([])
       assignedIssuePage.current = 1
@@ -260,9 +268,9 @@ const Task = () => {
     } else if (status === "Done") {
       color = "red"
     } else {
-      return
+      color = "blue"
     }
-    return `accent-${color}-100 focus:ring-${color}-300 hover:accent-${color}-400 `
+    return `bg-${color}-100`
   }
 
   // Modal effect
@@ -335,20 +343,23 @@ const Task = () => {
           </select>
           {showType.current === "assigned" && (
             <div className="flex">
-              {/* FIXME: fix the color of checkbox */}
               {statusCheck.map((status, index) => (
                 <label className="mx-2 flex items-center " key={status.name}>
                   <input
                     type="checkbox"
-                    className={`${getStatusCheckbox(
-                      status.name
-                    )} w-4 h-4 mx-2 py-1  ring-inset bg-gray-300 border-gray-300  rounded   focus:ring-2 `}
+                    className={` w-4 h-4 mx-2 py-1  ring-inset bg-gray-300 border-gray-300  rounded   focus:ring-2 `}
                     onChange={() => handleStatusChange(index)}
                     name="status"
                     id=""
                     checked={status.checked}
                   />
-                  {status.name}
+                  <span
+                    className={`${getStatusCheckbox(
+                      status.name
+                    )} px-2 rounded-md`}
+                  >
+                    {status.name}
+                  </span>
                 </label>
               ))}
             </div>

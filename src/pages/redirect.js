@@ -1,6 +1,7 @@
 import axios from "axios"
 // import { client_id, client_secret } from "../global/constants"
-import { Octokit } from "@octokit/core"
+import Loading from "../global/Loading"
+import { showLoading } from "../global/function"
 import { useRef, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
@@ -26,18 +27,20 @@ const code = urlParams.get("code")
 // $.getJSON("http://localhost:9999/authenticate/" + code, function (data) {
 //   console.log(data.token)
 // })
-async function postData() {
+async function postData(navigate) {
   // const res = await fetch(`http://localhost:9999/authenticate/${code}`)
   const res = await axios({
     method: "get",
     url: `http://localhost:9999/authenticate/${code}`,
     // data: data,
     // headers: headers,
+  }).then((e) => {
+    const token = e.data.token
+    if (token) {
+      sessionStorage.setItem("token", token)
+      navigate("/task")
+    }
   })
-  const token = await res.data.token
-  if (token) {
-    sessionStorage.setItem("token", token)
-  }
 }
 
 const Redirect = () => {
@@ -48,13 +51,16 @@ const Redirect = () => {
       return
     }
     fetchToken.current = true
-    postData()
-    navigate("/task")
+    postData(navigate)
+    // if (postData()) {
+    //   navigate("/task")
+    // }
 
     // document.location.hash = "#/task"
+    showLoading()
   }, [])
 
-  return <div>redirect</div>
+  return <Loading></Loading>
 }
 
 export default Redirect

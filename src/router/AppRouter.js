@@ -5,10 +5,7 @@ import { HashRouter, Route, Routes } from "react-router-dom"
 import React, { useState } from "react"
 
 const App = () => {
-  const [data, setData] = useState("")
-
   return (
-    // <React.StrictMode>
     <HashRouter>
       <Routes>
         <Route path="/" element={<Login />} />
@@ -16,7 +13,6 @@ const App = () => {
         <Route path="task" element={<Task />} />
       </Routes>
     </HashRouter>
-    // </React.StrictMode>
   )
 }
 

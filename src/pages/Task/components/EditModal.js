@@ -99,6 +99,10 @@ const EditModal = ({ editItemRef, setModalItem, octokit }) => {
           closeModal()
           window.location.reload()
         })
+        .catch(() => {
+          alert("修改失敗，請再試一次")
+          closeModal()
+        })
       hiddenLoading()
     }
   }
