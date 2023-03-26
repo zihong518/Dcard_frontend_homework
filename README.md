@@ -10,7 +10,7 @@ A React app about task management with github assigned issue
 - Sort the issues by created date and filter according the status
 - Search issue about the keyword with infinite scroll from GitHub REST API from GitHub REST API with
 
-<img src="https://github.com/5j54d93/Dcard-2022-Web-Frontend-Intern-Homework/blob/master/.github/Asset/demo.gif" width='100%' height='100%'/>
+<img src="https://github.com/zihong518/Dcard_frontend_homework/blob/master/.github/Asset/demo.gif" width='100%' height='100%'/>
 
 ## Getting Started
 
