@@ -8,7 +8,7 @@ A React app about task management with github assigned issue
 - List all the assigned issue with infinite scroll from GitHub REST API
 - Edit and delete the issue from GitHub REST API
 - Sort the issues by created date and filter according the status
-- Search issue about the keyword with infinite scroll from GitHub REST API from GitHub REST API with
+- Search issue about the keyword with infinite scroll from GitHub REST API 
 
 <img src="https://github.com/zihong518/Dcard_frontend_homework/blob/master/.github/Asset/demo.gif" width='100%' height='100%'/>
 
